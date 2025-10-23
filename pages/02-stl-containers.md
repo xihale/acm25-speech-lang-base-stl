@@ -228,6 +228,7 @@ cout << lo->first << " " << lo->second;  // 输出键和值
 
 ::right::
 
+<v></v>
 <v>
 
 **键值对映射**
@@ -699,12 +700,3 @@ class: text-center
 | `string` | 随机 | `O(1)` | 拼接 `O(n)` | `O(n)` | 连续 | ✗ |
 
 
-
----
-layout: end
-class: text-center
----
-
-# 谢谢
-
-STL 容器 · 高效编程的基石
