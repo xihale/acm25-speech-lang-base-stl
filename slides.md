@@ -31,11 +31,12 @@ layout: two-cols
 
 本幻灯片在 Github 上开源
 
-开源地址：
+开源地址：https://github.com/xihale/acm25-speech-lang-base-stl
 
-在线查看：
+在线查看：https://acm25.xihale.top (或二维码)
 
-TODO: 二维码
+<img src="/images/acm25_url.png" width="60%" />
+
 
 ::right::
 
