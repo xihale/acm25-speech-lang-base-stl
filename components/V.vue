@@ -1,24 +1,26 @@
 <!--
-  V 组件 - 基于 v-click 的点击显示组件
+  V 组件 - 基于 Slidev 原生 v-click 机制的点击显示组件
   
   用法：
     在 two-cols 布局中：
     ::left::
-    <v>自动分配为 0（进入时即显示）</v>
-    <v>自动分配为 1</v>
+    <v>第一次点击显示（之前的隐藏）</v>
+    <v>第二次点击显示（之前的隐藏）</v>
     
     ::right::
-    <v>自动分配为 0（进入时即显示）</v>
-    <v>自动分配为 1</v>
+    <v>第一次点击显示（之前的隐藏）</v>
+    <v>第二次点击显示（之前的隐藏）</v>
   
   特性：
-    - 使用 Slidev 原生 v-click 机制
-    - 每次只显示当前块（通过 v-show）
-    - 左右 panel 独立计数，都从 0 开始
-    - 第一个元素（步骤 0）在进入幻灯片时就显示
+    - 每次只显示当前步骤的内容
+    - 之前的内容会被隐藏
+    - 支持在 SClickPanel 内部使用（左右独立计数）
+    - 不在 SClickPanel 内也能自动递增
+    - 支持 at 属性指定显示步骤
 -->
 <template>
   <div
+    v-click="clickDirective"
     v-show="isVisible"
     class="v-container"
   >
@@ -27,7 +29,7 @@
 </template>
 
 <script setup>
-import { inject, computed, onMounted } from 'vue'
+import { inject, computed, ref, watch } from 'vue'
 import { useSlideContext } from '@slidev/client'
 
 const STACK_CLICK_SYMBOL = Symbol.for('acm25.s-click-panel')
@@ -40,34 +42,46 @@ const props = defineProps({
 })
 
 const panel = inject(STACK_CLICK_SYMBOL, null)
-const { $clicks } = useSlideContext()
+const { $clicks, $slidev } = useSlideContext()
 
-// 分配步骤号（只执行一次）
-const assignedStep = (() => {
+// 全局计数器，用于在没有 SClickPanel 时自动分配步骤
+if (!globalThis.__vComponentCounter) {
+  globalThis.__vComponentCounter = {}
+}
+
+// 用于存储分配的步骤号
+const assignedStepRef = ref(null)
+
+// 分配步骤号
+const clickDirective = computed(() => {
   if (panel?.registerStep) {
     // 在 SClickPanel 内部，使用其自动分配机制
-    return panel.registerStep(props.at)
+    const step = panel.registerStep(props.at)
+    assignedStepRef.value = step
+    return step
   }
   
   // 不在 SClickPanel 内部
   if (props.at !== undefined) {
     const num = Number(props.at)
-    return Number.isFinite(num) && num >= 0 ? num : 0
+    const step = Number.isFinite(num) && num >= 0 ? num : undefined
+    assignedStepRef.value = step
+    return step
   }
   
-  // 默认为 0（这样第一个元素在进入时就显示）
-  return 0
-})()
-
-// 调试：打印分配的步骤
-onMounted(() => {
-  console.log('V component mounted, assignedStep:', assignedStep, 'current $clicks:', $clicks.value)
+  // 自动分配：使用全局计数器，按幻灯片页面隔离
+  const slideId = $slidev?.nav?.currentSlideNo || 0
+  if (!globalThis.__vComponentCounter[slideId]) {
+    globalThis.__vComponentCounter[slideId] = 0
+  }
+  const step = globalThis.__vComponentCounter[slideId]++
+  assignedStepRef.value = step
+  return step
 })
 
-// 只在当前步骤显示
+// 只在当前步骤显示（之前的会隐藏）
 const isVisible = computed(() => {
-  const visible = $clicks.value === assignedStep
-  console.log('isVisible check: $clicks =', $clicks.value, 'assignedStep =', assignedStep, 'visible =', visible)
-  return visible
+  if (assignedStepRef.value === null) return false
+  return $clicks.value === assignedStepRef.value
 })
 </script>
