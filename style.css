@@ -1,4 +1,16 @@
-.two-columns h2 {
+body {
+  font-family: 'LXGW WenKai', sans-serif;
+}
+
+.slidev-code-wrapper{
+  width: 100%;
+}
+
+code, pre {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.two-cols h2 {
   position: absolute;
   top: 0;
   /* left: 0; */
@@ -8,18 +20,23 @@
   padding: 0.5rem;
 }
 
-.visual-box {
-  background: #1a1a1a;
-  border: 2px solid #333;
-  padding: 1rem;
-  margin: 1rem 0;
-  border-radius: 4px;
-  font-family: 'Fira Code', monospace;
-}
-
 .section-title {
   background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
   border: 2px solid #333;
   padding: 4rem;
   border-radius: 8px;
+}
+
+.s-click-panel {
+  height: 100%;
+  width: 100%;
+}
+
+.v {
+  display: block;
+  width: 100%;
+}
+
+.v--hidden {
+  display: none !important;
 }
