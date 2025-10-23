@@ -20,7 +20,15 @@
 -->
 <template>
   <div
-    v-click="clickDirective"
+    v-if="assignedStep > 0"
+    v-click="assignedStep"
+    v-show="isVisible"
+    class="v-container"
+  >
+    <slot />
+  </div>
+  <div
+    v-else
     v-show="isVisible"
     class="v-container"
   >
@@ -29,7 +37,7 @@
 </template>
 
 <script setup>
-import { inject, computed, ref, watch } from 'vue'
+import { inject, computed } from 'vue'
 import { useSlideContext } from '@slidev/client'
 
 const STACK_CLICK_SYMBOL = Symbol.for('acm25.s-click-panel')
@@ -49,24 +57,17 @@ if (!globalThis.__vComponentCounter) {
   globalThis.__vComponentCounter = {}
 }
 
-// 用于存储分配的步骤号
-const assignedStepRef = ref(null)
-
-// 分配步骤号
-const clickDirective = computed(() => {
+// 分配步骤号（只执行一次，不能用 computed）
+const assignedStep = (() => {
   if (panel?.registerStep) {
     // 在 SClickPanel 内部，使用其自动分配机制
-    const step = panel.registerStep(props.at)
-    assignedStepRef.value = step
-    return step
+    return panel.registerStep(props.at)
   }
   
   // 不在 SClickPanel 内部
   if (props.at !== undefined) {
     const num = Number(props.at)
-    const step = Number.isFinite(num) && num >= 0 ? num : undefined
-    assignedStepRef.value = step
-    return step
+    return Number.isFinite(num) && num >= 0 ? num : 0
   }
   
   // 自动分配：使用全局计数器，按幻灯片页面隔离
@@ -74,14 +75,12 @@ const clickDirective = computed(() => {
   if (!globalThis.__vComponentCounter[slideId]) {
     globalThis.__vComponentCounter[slideId] = 0
   }
-  const step = globalThis.__vComponentCounter[slideId]++
-  assignedStepRef.value = step
-  return step
-})
+  return globalThis.__vComponentCounter[slideId]++
+})()
 
 // 只在当前步骤显示（之前的会隐藏）
+// 步骤 0 在进入时就显示（$clicks === 0）
 const isVisible = computed(() => {
-  if (assignedStepRef.value === null) return false
-  return $clicks.value === assignedStepRef.value
+  return $clicks.value === assignedStep
 })
 </script>
