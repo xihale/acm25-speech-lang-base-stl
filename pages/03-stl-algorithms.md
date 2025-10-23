@@ -1,412 +1,421 @@
 ---
 layout: section
 class: text-center
+transition: slide-left
 ---
 
-# 三、STL 算法与迭代器
+# 三、STL 算法
 
-15 分钟 · 高效算法库应用
-
----
-layout: two-cols
-layoutClass: gap-4
----
-
-## sort 排序
-
-
-
-```cpp {all|1-3|5-9|11-17}
-// 基本排序
-vector<int> v = {3, 1, 4, 1, 5};
-sort(v.begin(), v.end());  // 1, 1, 3, 4, 5
-
-// 降序排序
-sort(v.begin(), v.end(), greater<int>());
-// 5, 4, 3, 1, 1
-
-// Lambda 自定义排序
-vector<pair<int, int>> pairs = {{1,2}, {1,1}, {2,1}};
-sort(pairs.begin(), pairs.end(), 
-    [](auto& a, auto& b) {
-        if (a.first != b.first)
-            return a.first < b.first;   // 第一关键字
-        return a.second < b.second;     // 第二关键字
-    }
-);
-```
-
-::right::
-
-<v-clicks>
-
-### 排序特性
-<div class="visual-box">
-时间复杂度: O(n log n)<br>
-不稳定排序（可能改变相等元素顺序）<br>
-内省排序（快排+堆排序）
-</div>
-
-### stable_sort
-<div class="visual-box">
-稳定排序<br>
-保持相等元素的相对顺序<br>
-时间复杂度: O(n log n)
-</div>
-
-### ⚠️ 严格弱序
-<div class="visual-box highlight">
-比较函数必须满足:<br>
-• 反对称性<br>
-• 传递性<br>
-相等时返回 <code>false</code>
-</div>
-
-</v-clicks>
+标准模板库算法  
+高效 · 通用 · 强大
 
 ---
 layout: two-cols
 layoutClass: gap-4
 ---
 
-## 二分查找
+## 迭代器 (Iterator)
 
+```cpp {all|all|all|all}
+#include <algorithm>
 
-
-```cpp {all|1-5|7-11|13-18}
-// lower_bound: 第一个 >= x
-vector<int> v = {1, 2, 2, 3, 4};
-auto it = lower_bound(v.begin(), v.end(), 2);
-int pos = it - v.begin();  // 1
-// v[pos] = 2 (第一个 >= 2)
-
-// upper_bound: 第一个 > x
-it = upper_bound(v.begin(), v.end(), 2);
-pos = it - v.begin();  // 3
-// v[pos] = 3 (第一个 > 2)
-
-// 查找区间
-auto lb = lower_bound(v.begin(), v.end(), 2);
-auto ub = upper_bound(v.begin(), v.end(), 2);
-int count = ub - lb;  // 2 个
-// [lb, ub) 是所有等于 2 的元素
-```
-
-::right::
-
-<v-clicks>
-
-### lower_bound
-<div class="visual-box">
-返回第一个 <strong>≥ x</strong> 的位置<br>
-时间复杂度: O(log n)<br>
-<strong>需要有序序列</strong>
-</div>
-
-### upper_bound
-<div class="visual-box">
-返回第一个 <strong>> x</strong> 的位置<br>
-时间复杂度: O(log n)
-</div>
-
-### 可视化
-<div class="visual-box">
-<code>v: [1, 2, 2, 3, 4]</code><br>
-<code>lower_bound(2): ↑</code><br>
-<code>&nbsp;&nbsp;&nbsp;[1, <strong>2</strong>, 2, 3, 4]</code><br>
-<code>upper_bound(2):&nbsp;&nbsp;&nbsp;&nbsp;↑</code><br>
-<code>&nbsp;&nbsp;&nbsp;[1, 2, 2, <strong>3</strong>, 4]</code>
-</div>
-
-</v-clicks>
-
----
-layout: two-cols
-layoutClass: gap-4
----
-
-## 迭代器
-
-
-
-```cpp {all|1-5|7-11|13-17}
-// 迭代器遍历
+// 获取迭代器
 vector<int> v = {1, 2, 3, 4, 5};
+auto it = v.begin();  // 指向第一个元素
+auto end = v.end();   // 指向最后一个元素之后
+
+// 遍历容器
 for (auto it = v.begin(); it != v.end(); ++it) {
     cout << *it << " ";
 }
 
-// 迭代器运算
-auto it = v.begin();
-it += 2;          // 前进 2 步
-int dist = v.end() - v.begin();  // 距离
+// 使用迭代器范围
+sort(v.begin(), v.end());
+reverse(v.begin(), v.end());
 
-// 反向迭代器
-for (auto it = v.rbegin(); it != v.rend(); ++it) {
-    cout << *it << " ";  // 5 4 3 2 1
+// 迭代器运算
+auto it2 = v.begin() + 3;  // 随机访问迭代器
+++it;   // 前进一个位置
+--it;   // 后退一个位置
+```
+
+::right::
+
+<v>
+
+### 什么是迭代器
+
+类似指针的对象，用于遍历容器中的元素
+
+- 提供通用访问方式
+- 隐藏底层实现细节
+- 统一操作不同容器
+
+</v>
+
+<v>
+
+### 迭代器类型
+
+**输入/输出迭代器**：只读/只写  
+**前向迭代器**：读写 + 前进遍历  
+**双向迭代器**：前向 + 后退  
+**随机访问迭代器**：双向 + 直接访问
+
+</v>
+
+<v>
+
+### STL 容器支持
+
+`vector`/`deque`: 随机访问  
+  
+`list`/`set`/`map`: 双向  
+
+`stack`/`queue`: 不支持
+
+</v>
+
+<v>
+
+### ⚠️ 注意事项
+
+修改容器（增删元素）时，迭代器可能失效
+
+- `vector` 动态扩容会使迭代器失效
+- 应重新获取迭代器
+
+</v>
+
+---
+layout: two-cols
+layoutClass: gap-4
+---
+
+## Lambda 表达式
+
+```cpp {all|1-4|6-9|11-14|16-}
+// 基本语法
+auto add = [](int a, int b) -> int {
+    return a + b;
+};
+
+// 捕获外部变量
+int x = 10;
+auto f1 = [x]() { return x; };      // 按值捕获
+auto f2 = [&x]() { x++; };           // 按引用捕获
+
+// 在算法中使用
+vector<int> v = {5, 2, 8, 1, 9};
+sort(v.begin(), v.end(), 
+     [](int a, int b) { return a > b; });  // 降序
+
+// 复杂捕获
+int y = 20;
+auto f3 = [x, &y]() {    // x按值，y按引用
+    return x + y;
+};
+auto f4 = [=]() {};      // 全部按值捕获
+auto f5 = [&]() {};      // 全部按引用捕获
+```
+
+::right::
+
+<v>
+
+### 语法结构
+
+```cpp
+[capture](parameters) -> return_type {
+    // function body
 }
 ```
 
-::right::
+</v>
 
-<v-clicks>
+<v>
 
-### 迭代器分类
-<div class="visual-box">
-• 输入迭代器: 只读，单次遍历<br>
-• 输出迭代器: 只写<br>
-• 前向迭代器: 可多次遍历<br>
-• 双向迭代器: 可前后移动<br>
-• 随机访问: 可跳跃访问
-</div>
+### 捕获列表
 
-### 容器迭代器类型
-<div class="visual-box">
-<code>vector/deque/array</code>: 随机访问<br>
-<code>list</code>: 双向<br>
-<code>set/map</code>: 双向<br>
-<code>forward_list</code>: 前向
-</div>
+`[]`: 不捕获  
+`[=]`: 按值捕获全部  
+`[&]`: 按引用捕获全部  
+`[x]`: 按值捕获 x  
+`[&x]`: 按引用捕获 x  
+`[x, &y]`: 混合捕获
 
-</v-clicks>
+</v>
+
+<v>
+
+### 优势
+
+✓ 简洁，避免命名函数  
+✓ 可访问外部变量  
+✓ 局部使用，逻辑清晰
+
+</v>
+
+<v>
+
+### 使用场景
+
+- 自定义排序规则
+- 回调函数
+- 算法谓词
+
+</v>
 
 ---
 layout: two-cols
 layoutClass: gap-4
 ---
 
-## 查找算法
+## sort / stable_sort
+
+```cpp {all|3-4|6-7|9-|all}
+#include <algorithm>
+
+int a[] = {0, 2, 6, 8, 4, 5, 1, 4, 6, 2, 4, 9};
+sort(a + 1, a + 6);  // 排序 [1, 6) 区间
+
+// 降序排序
+sort(a, a + 10, greater<>{});
+
+// 自定义结构体排序
+struct Student {
+    string name;
+    int score;
+};
+vector<Student> students = {
+    {"Alice", 90}, {"Bob", 85}, {"Carol", 90}
+};
+
+// 按分数降序
+sort(students.begin(), students.end(),
+     [](const Student& a, const Student& b) {
+         return a.score > b.score;
+     });
+
+// 稳定排序（保持相对顺序）
+stable_sort(students.begin(), students.end(),
+            [](const Student& a, const Student& b) {
+                return a.score > b.score;
+            });
+```
+
+::right::
+
+<v>
+
+### 函数原型
+
+```cpp
+sort(begin, end, cmp);
+stable_sort(begin, end, cmp);
+```
+
+- `begin/end`: 迭代器范围
+- `cmp`: 比较函数（可选，默认升序排序）
+
+`O(n log n)`
+
+</v>
+<v></v>
+<v></v>
+<v>
+
+### sort vs stable_sort
+
+**sort**
+- 不保证稳定性
+- 速度更快
+
+**stable_sort**
+- 保证相等元素的相对顺序
+- 略慢，但更可预测
+
+</v>
+
+---
+layout: two-cols
+layoutClass: gap-4
+---
+
+## lower_bound / upper_bound
+
+```cpp {all|1-2|4-10|12-15}
+vector<int> v = {1, 1, 4, 4, 4, 5, 5};
+sort(v.begin(), v.end());  // 必须先排序
+
+// lower_bound: 第一个 >= val 的位置
+auto it1 = lower_bound(v.begin(), v.end(), 4);
+cout << "lower: " << (it1 - v.begin());  // 输出 2
+
+// upper_bound: 第一个 > val 的位置
+auto it2 = upper_bound(v.begin(), v.end(), 4);
+cout << "upper: " << (it2 - v.begin());  // 输出 5
+
+// 计算某值出现次数
+int cnt = upper_bound(v.begin(), v.end(), 4) 
+        - lower_bound(v.begin(), v.end(), 4);
+cout << "count: " << cnt;  // 输出 3
+```
+
+::right::
+
+<v>
+
+`O(log n)` - 二分查找
+
+> 先排序！
+
+返回迭代器（或指针）
+
+- 找到：指向目标位置
+- 未找到：指向插入位置
 
 
+| 函数 | 行为 |
+|------|---------|
+| `lower_bound` | 第一个 ≥ val |
+| `upper_bound` | 第一个 > val |
 
-```cpp {all|1-4|6-9|11-14|16-19}
-// find - 查找元素
+</v>
+
+
+---
+layout: two-cols
+layoutClass: gap-4
+---
+
+## 其他常用算法
+
+<v>
+
+```cpp
+// find: 查找元素
 vector<int> v = {1, 2, 3, 4, 5};
 auto it = find(v.begin(), v.end(), 3);
-if (it != v.end()) { }  // 找到
-
-// count - 计数
-int cnt = count(v.begin(), v.end(), 3);
-// cnt = 1
-
-// find_if - 条件查找
-auto it2 = find_if(v.begin(), v.end(), 
-    [](int x) { return x > 3; }
-);
-// *it2 = 4
-
-// binary_search - 二分查找（返回 bool）
-bool found = binary_search(v.begin(), v.end(), 3);
+if (it != v.end()) 
+    cout << "找到: " << *it;
 ```
 
-::right::
+</v>
 
-<v-clicks>
+<v>
 
-### 线性查找
-<div class="visual-box">
-<code>find(begin, end, value)</code><br>
-<code>find_if(begin, end, pred)</code><br>
-时间复杂度: O(n)
-</div>
-
-### 计数
-<div class="visual-box">
-<code>count(begin, end, value)</code><br>
-<code>count_if(begin, end, pred)</code><br>
-时间复杂度: O(n)
-</div>
-
-### 二分查找
-<div class="visual-box">
-<code>binary_search()</code>: 返回 bool<br>
-<code>lower_bound()</code>: 返回位置<br>
-<code>upper_bound()</code>: 返回位置<br>
-<strong>需要有序</strong>，O(log n)
-</div>
-
-</v-clicks>
-
----
-layout: two-cols
-layoutClass: gap-4
----
-
-## 修改算法
-
-
-
-```cpp {all|1-4|6-9|11-15|17-20}
-// reverse - 反转
-vector<int> v = {1, 2, 3, 4, 5};
+```cpp
+// reverse: 反转序列
 reverse(v.begin(), v.end());
-// v: 5, 4, 3, 2, 1
-
-// unique - 去重（需要先排序）
-v = {1, 1, 2, 2, 3};
-auto last = unique(v.begin(), v.end());
-v.erase(last, v.end());  // v: 1, 2, 3
-
-// fill - 填充
-fill(v.begin(), v.end(), 0);
-// v: 0, 0, 0
-
-// rotate - 旋转
-v = {1, 2, 3, 4, 5};
-rotate(v.begin(), v.begin() + 2, v.end());
-// v: 3, 4, 5, 1, 2
+// v = {5, 4, 3, 2, 1}
 ```
 
-::right::
+</v>
 
-<v-clicks>
+<v>
 
-### 序列操作
-<div class="visual-box">
-<code>reverse()</code>: 反转<br>
-<code>rotate()</code>: 旋转<br>
-<code>fill()</code>: 填充<br>
-<code>swap()</code>: 交换
-</div>
+```cpp
+// unique: 去重（需先排序）
+vector<int> v2 = {1, 1, 2, 2, 3, 3};
+sort(v2.begin(), v2.end());
+v2.erase(unique(v2.begin(), v2.end()), 
+         v2.end());
+// v2 = {1, 2, 3}
+```
 
-### unique 去重
-<div class="visual-box highlight">
-⚠️ 只移除<strong>连续</strong>重复元素<br>
-返回新逻辑末尾<br>
-需要配合 <code>erase</code><br>
-<strong>通常先 sort</strong>
-</div>
+</v>
 
-### 使用示例
-<div class="visual-box">
-<code>sort(v.begin(), v.end());</code><br>
-<code>v.erase(unique(v.begin(), v.end()), v.end());</code>
-</div>
+<v>
 
-</v-clicks>
+```cpp
+// count: 计数
+vector<int> v3 = {1, 2, 3, 2, 2};
+int cnt = count(v3.begin(), v3.end(), 2);
+// cnt = 3
+```
 
----
-layout: two-cols
-layoutClass: gap-4
----
+</v>
 
-## 数值算法
+<v>
 
-
-
-```cpp {all|1-5|7-11|13-17}
-// accumulate - 求和
+```cpp
+// accumulate: 求和
 #include <numeric>
-vector<int> v = {1, 2, 3, 4, 5};
-int sum = accumulate(v.begin(), v.end(), 0);
+vector<int> v4 = {1, 2, 3, 4, 5};
+int sum = accumulate(v4.begin(), v4.end(), 0);
 // sum = 15
 
-// accumulate - 自定义操作
-int product = accumulate(v.begin(), v.end(), 1,
-    [](int a, int b) { return a * b; }
-);
+// 自定义累积操作
+int product = accumulate(v4.begin(), v4.end(), 1,
+    [](int a, int b) { return a * b; });
 // product = 120
-
-// min/max_element - 最值
-auto minIt = min_element(v.begin(), v.end());
-auto maxIt = max_element(v.begin(), v.end());
-int minVal = *minIt;  // 1
-int maxVal = *maxIt;  // 5
 ```
+
+</v>
 
 ::right::
 
-<v-clicks>
+<v>
 
-### 数值算法
-<div class="visual-box">
-需要 <code>#include &lt;numeric&gt;</code><br>
-<code>accumulate()</code>: 累积<br>
-<code>partial_sum()</code>: 前缀和<br>
-<code>adjacent_difference()</code>: 差分
-</div>
+### find
 
-### 最值查找
-<div class="visual-box">
-<code>min_element()</code><br>
-<code>max_element()</code><br>
-<code>minmax_element()</code><br>
-返回<strong>迭代器</strong>
-</div>
+线性查找，`O(n)`
 
-### accumulate 用法
-<div class="visual-box">
-初始值很重要！<br>
-<code>0</code>: 求和<br>
-<code>1</code>: 求积
-</div>
+返回指向第一个匹配元素的迭代器
 
-</v-clicks>
+- 找到：指向元素
+- 未找到：返回 `end()`
 
----
-layout: two-cols
-layoutClass: gap-4
----
+</v>
 
-## 算法与容器配合
+<v>
 
+### reverse
 
+原地反转序列，`O(n)`
 
-```cpp {all|1-6|8-13|15-20}
-// begin/end 辅助函数
-vector<int> v = {3, 1, 4, 1, 5};
-sort(begin(v), end(v));
+直接修改容器内容
 
-// 数组也可用
-int arr[] = {3, 1, 4, 1, 5};
-sort(begin(arr), end(arr));
+常用于反转字符串、数组
 
-// 范围算法（C++20）
-#include <ranges>
-namespace rng = std::ranges;
-rng::sort(v);
-rng::reverse(v);
+</v>
 
-// all_of / any_of / none_of
-bool all = all_of(v.begin(), v.end(), 
-    [](int x) { return x > 0; }
-);
-```
+<v>
 
-::right::
+### unique
 
-<v-clicks>
+移除**连续**的重复元素，`O(n)`
 
-### begin/end 函数
-<div class="visual-box">
-统一接口<br>
-<code>std::begin() / std::end()</code><br>
-适用于数组、容器
-</div>
+⚠️ **必须先排序**才能完全去重
 
-### 逻辑判断
-<div class="visual-box">
-<code>all_of()</code>: 全部满足<br>
-<code>any_of()</code>: 任一满足<br>
-<code>none_of()</code>: 全不满足
-</div>
+返回新的逻辑末尾，配合 `erase` 删除
 
-### C++20 Ranges
-<div class="visual-box">
-<code>std::ranges::sort(v)</code><br>
-更简洁的语法<br>
-视图（惰性计算）
-</div>
+</v>
 
-</v-clicks>
+<v>
 
----
-layout: center
-class: text-center
----
+### count
 
-## 第三部分完成
+统计值出现次数，`O(n)`
 
-STL 算法与迭代器 ✓
+遍历整个范围计数
 
-下一部分：语言进阶特性
+适用于任何容器
+
+</v>
+
+<v>
+
+### accumulate
+
+累积运算，`O(n)`
+
+需要 `#include <numeric>`
+
+- 默认：求和
+- 可自定义：乘积、最大值等
+
+第三个参数是初始值
+
+</v>

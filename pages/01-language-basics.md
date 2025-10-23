@@ -1,27 +1,28 @@
 ---
 layout: section
 class: text-center
+transition: slide-left
 ---
 
-# 一、语言基础
+# 一、C++ 语言基础
 
-55 分钟 · C++ 核心语法与常见陷阱
+入门必备知识  
+基础 · 规范 · 实用
 
 ---
 layout: two-cols
 layoutClass: gap-4
 ---
 
-## 头文件与基本结构
+## 初级模板
 
-```cpp {all|1|3-5|7-8}
+```cpp {all|1|1|2|2|2|2|4|8|all}
 #include <bits/stdc++.h>
-
 using namespace std;
 
 int main() {
-    // 单行注释
-    /* 多行注释 */
+    
+    // do something...
     
     return 0;
 }
@@ -29,619 +30,530 @@ int main() {
 
 ::right::
 
-<v-click at="1">
+<v>
 
-### 万能头文件
-<div class="visual-box">
-✓ 包含所有标准库<br>
-✗ 编译速度较慢<br>
-→ 竞赛常用，项目慎用
-</div>
+如果你不想深究背后的原理，初学时可以直接将这个「框架」背下来
 
-</v-click>
+</v>
 
-<v-click at="2">
+<v>
+
+### 头文件
+
+- 代码复用
+- 接口调用
+
+### 预处理器
+
+直接将头文件内容复制到当前文件
+
+> 通过下面的命令可以查看预处理器究竟是如何工作的
+>
+> ```cpp
+> g++ -E main.cpp -o main.i
+> ```
+
+</v>
+<v>
+
+### 万能头
+`#include <bits/stdc++.h>` 包含了大多数常用头文件
+
+- ✓ 算法竞赛常用，简便快速
+- ✗ 工程开发不推荐（增加编译时间、项目依赖不清晰）
+
+### 示意内容
+
+```cpp
+// <bits/stdc++.h> 实际上包含了以下常用头文件
+#include <iostream>      // 输入输出
+#include <vector>        // 动态数组
+#include <algorithm>     // 排序、查找等算法
+#include <string>        // 字符串
+#include <map>           // 映射
+#include <set>           // 集合
+#include <queue>         // 队列
+#include <stack>         // 栈
+#include <cmath>         // 数学函数
+#include <cstring>       // 字符串处理
+// ...
+```
+
+
+</v>
+
+<v>
 
 ### 命名空间
-<div class="visual-box">
-<code>std::</code> 标准库命名空间<br>
-<code>using namespace std;</code> 简化代码
-</div>
 
-</v-click>
-
-<v-click at="3">
-
-### main 函数
-<div class="visual-box">
-返回 0 表示程序正常结束
-</div>
-
-</v-click>
-
----
-layout: two-cols
-layoutClass: gap-4
----
-
-## 数据类型
-
-
-
-```cpp {all|1-3|5-7|9-11}
-// 整数类型
-int a = 100;           // 4 字节
-long long b = 1e18;    // 8 字节
-
-// 浮点类型
-double x = 0.1;
-long double y = 3.14159265358979323846;
-
-// 字符类型
-char ch = 'A';         // ASCII: 65
-char digit = '0' + 5;  // '5'
+```mermaid
+graph LR
+    A["大公司"] --> B["财务部"]
+    A --> C["销售部"]
+    A --> D["技术部"]
+    B --> B1["张三"]
+    C --> C1["张三"]
+    D --> D1["张三"]
+```
+```mermaid
+graph LR
+    A["大项目"] --> B["A库"]
+    A --> C["B库"]
+    A --> D["C库"]
+    B --> B1["Func"]
+    C --> C1["Func"]
+    D --> D1["Func"]
 ```
 
-::right::
+- 方便区分
+- 避免污染
 
-<v-click at="1">
+</v>
+<v>
 
-### 整数范围
-<div class="visual-box">
-<code>int</code>: -2³¹ ~ 2³¹-1<br>
-<code>long long</code>: -2⁶³ ~ 2⁶³-1
-</div>
+### `using namespace`
 
-</v-click>
+指定默认命名空间
 
-<v-click at="2">
+`using namespace std;`
 
-### ⚠️ 浮点数陷阱
-<div class="visual-box highlight">
-<code>0.1 + 0.2 ≠ 0.3</code><br>
-精度误差！避免 <code>==</code> 比较
-</div>
+默认使用 `std` 空间内的内容  
+之后就不用显式声明 `std::`
 
-</v-click>
+- ✓ 算法竞赛常用
+- ✗ 工程开发不推荐
+</v>
+<v>
 
-<v-click at="3">
+### `using` 关键字
 
-### ASCII 码
-<div class="visual-box">
-'A' = 65, 'a' = 97<br>
-'0' = 48, '9' = 57
-</div>
+也可以只引入特定名称：
 
-</v-click>
+```cpp
+using std::cout;
+using std::endl;
 
----
-layout: two-cols
-layoutClass: gap-4
----
-
-## 类型转换与溢出
-
-
-
-```cpp {all|1-3|5-8|10-13}
-// 隐式转换
-int i = 10;
-double d = i / 3;      // 3.0 (整数除法)
-double d2 = i / 3.0;   // 3.333...
-
-// unsigned 溢出（定义明确）
-unsigned int u = 0;
-u = u - 1;             // 4294967295 (循环)
-
-// signed 溢出（未定义行为！）
-int x = INT_MAX;
-x = x + 1;             // UB! 可能是负数或其他
+cout << "Hello" << endl;
 ```
 
-::right::
+</v>
+<v>
 
-<v-clicks>
+### 其他用法
 
-### 隐式转换规则
-<div class="visual-box">
-整数 / 整数 = 整数<br>
-整数 / 浮点 = 浮点
-</div>
+也可以使用 `using` 声明类型别名：
 
-### unsigned 溢出
-<div class="visual-box">
-<code>0 - 1 = UINT_MAX</code><br>
-<code>UINT_MAX + 1 = 0</code><br>
-行为定义明确（循环）
-</div>
-
-### ⚠️ signed 溢出
-<div class="visual-box highlight">
-未定义行为 (UB)<br>
-编译器可能优化出错<br>
-→ 使用 <code>long long</code>
-</div>
-
-</v-clicks>
-
----
-layout: two-cols
-layoutClass: gap-4
----
-
-## 未定义行为
-
-
-
-```cpp {all|1-3|5-7|9-11}
-// 1. signed 溢出
-int x = INT_MAX + 1;   // UB!
-
-// 2. 数组越界
-int arr[10];
-arr[100] = 1;          // UB!
-
-// 3. 空指针解引用
-int* p = nullptr;
-*p = 10;               // UB!
+```cpp
+using int_array = int[10];      // 数组类型别名
+using func_ptr = void(*)(int);  // 函数指针类型别名
+using myint = int;              // 简化类型名
 ```
 
-::right::
+对比 `typedef`（传统方式） 更简洁、优雅、易读：
 
-<v-clicks>
-
-### 什么是 UB？
-<div class="visual-box highlight">
-Undefined Behavior<br>
-未定义行为 = 不可预测<br>
-可能崩溃、出错或看似正常
-</div>
-
-### 常见 UB 情况
-<div class="visual-box">
-• signed 整数溢出<br>
-• 数组越界访问<br>
-• 空指针解引用<br>
-• 除以零<br>
-• 未初始化变量
-</div>
-
-### 如何避免？
-<div class="visual-box">
-→ 使用 <code>long long</code><br>
-→ 检查数组边界<br>
-→ 使用前初始化
-</div>
-
-</v-clicks>
-
----
-layout: two-cols
-layoutClass: gap-4
----
-
-## 输入输出
-
-
-
-```cpp {all|1-3|5-8|10-13}
-// 基本输入输出
-int n;
-cin >> n;
-cout << n << endl;
-
-// 优化输入输出速度
-ios::sync_with_stdio(false);
-cin.tie(nullptr);
-
-// endl vs '\n'
-cout << "Hello" << endl;  // 刷新缓冲区
-cout << "World" << '\n';  // 不刷新（更快）
+```cpp
+typedef int myint;
+typedef int int_array[10];
 ```
 
-::right::
+</v>
 
-<v-clicks>
+<v>
 
-### 流操作
-<div class="visual-box">
-<code>cin</code>: 标准输入<br>
-<code>cout</code>: 标准输出<br>
-<code>cerr</code>: 标准错误
-</div>
+### `main` 函数
 
-### ⚡ 加速技巧
-<div class="visual-box highlight">
-<code>sync_with_stdio(false)</code><br>
-关闭 C/C++ 同步<br>
-<code>cin.tie(nullptr)</code><br>
-解除 cin/cout 绑定<br>
-→ 输入输出提速 10x
-</div>
+程序的入口点，执行从这里开始
 
-### endl vs '\n'
-<div class="visual-box">
-<code>endl</code>: 换行 + 刷新缓冲<br>
-<code>'\n'</code>: 仅换行（推荐）
-</div>
-
-</v-clicks>
-
----
-layout: two-cols
-layoutClass: gap-4
----
-
-## 函数参数求值顺序
-
-
-
-```cpp {all|1-4|6-11}
-// 未定义的求值顺序
-int i = 0;
-// UB: i++ 的顺序不确定
-printf("%d %d\n", i++, i++);
-
-// 正确做法
-int a = i++;
-int b = i++;
-printf("%d %d\n", a, b);  // 0 1
-```
-
-::right::
-
-<v-clicks>
-
-### ⚠️ 无序求值
-<div class="visual-box highlight">
-函数参数的求值顺序<br>
-<strong>未定义</strong><br>
-可能从左到右<br>
-也可能从右到左
-</div>
-
-### 示例分析
-<div class="visual-box">
-<code>f(i++, i++)</code><br>
-可能输出: 0 1<br>
-也可能: 1 0<br>
-甚至: 0 0 或 1 1
-</div>
-
-### 解决方案
-<div class="visual-box">
-→ 拆分为多个语句<br>
-→ 避免副作用表达式
-</div>
-
-</v-clicks>
-
----
-layout: two-cols
-layoutClass: gap-4
----
-
-## 花式操作
-
-
-
-```cpp {all|1-2|4-7|9-12}
-#define int long long
-signed main() {
-    int a = 1e18;  // 实际是 long long
+```cpp
+int main() {
+    // 你的代码
     return 0;
 }
-
-// Lambda 表达式 - 临时函数
-auto add = [](int a, int b) {
-    return a + b;
-};
-int sum = add(3, 5);  // 8
 ```
 
-::right::
+- `int` 表示函数返回整数类型
+- `main` 是固定的函数名
+- 每个 C/C++ 程序有且仅有一个 `main` 函数
 
-<v-clicks>
+> `main` 由运行时启动代码调用，在大多数操作系统中，其在 `_start` 函数中被调用
+</v>
 
-### 竞赛技巧
-<div class="visual-box highlight">
-<code>#define int long long</code><br>
-→ 全局替换 int 为 long long<br>
-→ 避免溢出<br>
-⚠️ main 要用 <code>signed</code>
-</div>
+<v>
 
-### Lambda 快速映射
-<div class="visual-box">
-临时创建小函数<br>
-语法: <code>[捕获](参数) { 函数体 }</code>
-</div>
+### `return 0`
 
-### 使用场景
-<div class="visual-box">
-• 排序自定义比较<br>
-• 算法回调函数<br>
-• 临时逻辑封装
-</div>
+表示程序正常结束
 
-</v-clicks>
+- `0` 表示成功执行
+- 非 `0` 值通常表示错误
+
+操作系统会接收这个返回值：
+```cpp
+return 0;   // 成功
+return 1;   // 出错
+return -1;  // 出错
+```
+
+> 在算法竞赛中，通常都返回 `0`
+</v>
 
 ---
 layout: two-cols
 layoutClass: gap-4
 ---
 
-## 数学函数
+## 注释
 
+```cpp {all}
+// 单行注释
+// 双斜杠后的内容都会被注释
 
+/*
+多行注释
+可以一次注释多行代码
+*/
 
-```cpp {all|1-4|6-9|11-14}
-// 基本运算
-int a = abs(-5);        // 5
-double p = pow(2, 10);  // 1024.0
-double s = sqrt(16);    // 4.0
-
-// 三角函数
-double pi = acos(-1);
-double x = sin(pi / 2); // 1.0
-double y = cos(0);      // 1.0
-
-// 对数
-double ln = log(2.718); // ≈1 (自然对数)
-double lg = log10(100); // 2 (常用对数)
+int main() {
+    // 注释可以用来解释代码
+    // 也可以让某段代码不执行但保留在源文件里
+    
+    // cout << "这行代码不会执行";
+    cout << "这行代码会执行";
+    
+    return 0;
+}
 ```
 
 ::right::
 
-<v-clicks>
+<v>
 
-### 基本函数
-<div class="visual-box">
-<code>abs(x)</code>: 绝对值<br>
-<code>pow(x, y)</code>: x 的 y 次方<br>
-<code>sqrt(x)</code>: 平方根
-</div>
+### 作用
 
-### 三角函数
-<div class="visual-box">
-<code>sin / cos / tan</code><br>
-<code>asin / acos / atan</code><br>
-参数单位: 弧度
-</div>
+- 解释程序的意思
+- 临时禁用代码
+- 对程序运行没有影响
 
-### 对数函数
-<div class="visual-box">
-<code>log(x)</code>: ln(x)<br>
-<code>log10(x)</code>: lg(x)<br>
-<code>log2(x)</code>: log₂(x)
-</div>
+### 注意事项
 
-</v-clicks>
+⚠️ `\` 与 `/` 是两种不同的斜杠
+
+- `/` 用于注释
+- `\` 用于转义字符
+
+</v>
 
 ---
 layout: two-cols
 layoutClass: gap-4
 ---
 
-## 位运算
+## 浮点数比较
 
+```cpp {all|9-}
+double a = 0.1, b = 0.2, c = 0.3;
 
+// ❌ 错误：直接比较浮点数
+cout << "a + b = " << (a + b) << '\n';// 0.30000000000000004
+cout << "c = " << c << '\n';          // 0.3
+cout << 
+    (a + b == c ? "相等" : "不相等");  // 不相等！
 
-```cpp {all|1-6|8-11|13-16}
-// 基本位运算
-int a = 5;      // 0101
-int b = 3;      // 0011
-int c = a & b;  // 0001 = 1 (AND)
-int d = a | b;  // 0111 = 7 (OR)
-int e = a ^ b;  // 0110 = 6 (XOR)
-
-// 移位运算
-int f = 1 << 3;  // 1000 = 8 (左移)
-int g = 8 >> 2;  // 0010 = 2 (右移)
-int h = ~a;      // 取反
-
-// 常用技巧
-bool isPow2 = (n & (n-1)) == 0;  // 判断 2 的幂
-int lowbit = n & (-n);           // 最低位 1
-int cnt = __builtin_popcount(n); // 统计 1 的个数
+// ✓ 正确：使用 epsilon 进行比较
+const double eps = 1e-9;
+if (abs(a + b - c) < eps) {          // 认为相等
+    cout << "认为相等\n";
+} else {
+    cout << "不相等\n";
+}
 ```
 
 ::right::
 
-<v-clicks>
+<v>
 
-### 位运算符
-<div class="visual-box">
-<code>&</code> 按位与 (AND)<br>
-<code>|</code> 按位或 (OR)<br>
-<code>^</code> 按位异或 (XOR)<br>
-<code>~</code> 按位取反 (NOT)<br>
-<code><<</code> 左移 <code>>></code> 右移
-</div>
+### 为什么会有误差？
 
-### 快速运算
-<div class="visual-box">
-<code>n << k</code> = n × 2^k<br>
-<code>n >> k</code> = n ÷ 2^k
-</div>
+浮点数采用 **IEEE 754 标准**，用二进制表示，无法精确表示所有十进制小数。
 
-### 常用技巧
-<div class="visual-box">
-<code>n & 1</code>: 判断奇偶<br>
-<code>n & (n-1)</code>: 清除最低位 1<br>
-<code>__builtin_popcount</code>: 统计 1
-</div>
+**根本原因**：某些十进制小数在二进制中是**无限循环**的
 
-</v-clicks>
+例如 0.1 的二进制表示：
+$$0.1_{(10)} = 0.00011001100110011\ldots_{(2)}$$
+
+**实际计算过程**：
+- `0.1` 存储为近似值 `0.1000...0001`
+- `0.2` 存储为近似值 `0.2000...0003`
+- 相加后的结果略大于 `0.3`
+
+效率高
+
+</v>
+
+<v>
+
+### 如何正确比较？
+
+使用 **epsilon（$ϵ$）比较法**：
+
+$$|a - b| < \varepsilon \Rightarrow a \approx b$$
+
+```cpp
+const double eps = 1e-9;
+if (abs(a - b) < eps) {
+    // 认为 a 和 b 相等
+}
+```
+
+**epsilon 的选择**：
+- `1e-6` ~ `1e-9`：适用于大多数场景
+- `1e-12`：高精度场景
+
+</v>
 
 ---
 layout: two-cols
 layoutClass: gap-4
 ---
 
-## 复杂度分析
+## 隐式转换
 
-
-
-```cpp {all|1-4|6-9|11-14|16-19}
-// O(1) - 常数时间
-int x = arr[0];
-
-// O(n) - 线性时间
-for (int i = 0; i < n; i++) {
-    sum += arr[i];
+```cpp
+if (1) {
+    cout << "1 is true" << '\n';       // 1 is true
 }
 
-// O(n log n) - 对数线性
-sort(arr, arr + n);
+if (0) {
+    cout << "0 is true" << '\n';
+} else {
+    cout << "0 is false" << '\n';      // 0 is false
+}
 
-// O(n²) - 平方时间
-for (int i = 0; i < n; i++)
-    for (int j = 0; j < n; j++)
-        // ...
+if (-1) {
+    cout << "-1 is also true" << '\n'; //-1 is also true
+}
 
-// O(2^n) - 指数时间（慢！）
-// 递归暴力枚举
+// 字符类型的运算
+char ca = 'a';
+auto x = ca + 10; // x: int
+cout << x;  // 输出：107（'a' 的 ASCII 码是 97）
 ```
 
 ::right::
 
-<v-clicks>
+<v>
 
-### 时间复杂度
-<div class="visual-box">
-O(1) < O(log n) < O(n) <<br>
-O(n log n) < O(n²) < O(2^n)
-</div>
+### 条件语句中的转换    
+- 在条件语句中，数值转换为布尔值
+  - `0` → `false`
+  - 非 `0`（包括负数）→ `true`
 
-### 常见数据规模
-<div class="visual-box">
-n ≤ 10: O(n!)<br>
-n ≤ 20: O(2^n)<br>
-n ≤ 500: O(n³)<br>
-n ≤ 5000: O(n²)<br>
-n ≤ 10⁶: O(n log n)<br>
-n ≤ 10⁸: O(n)
-</div>
+<br/>
 
-### 空间复杂度
-<div class="visual-box">
-数组大小、递归深度<br>
-通常要求 ≤ 256MB
-</div>
+### 算术运算中的转换
+- 当不同类型混合运算时，会自动转换为更"宽泛"的类型
+- `char` + `int` → `int`
+- `int` + `long` → `long`
+- `int` + `double` → `double`
 
-</v-clicks>
+</v>
+---
+layout: two-cols
+layoutClass: gap-4
+---
+
+## 输入输出优化
+
+```cpp {1|2}
+ios::sync_with_stdio(false);
+cin.tie(nullptr);
+```
+
+::right::
+
+<v>
+
+### 流同步
+
+C++ 的 `cin`/`cout` 和 C 的 `scanf`/`printf` 默认同步
+
+- 关闭同步可以大幅提升 `cin`/`cout` 效率
+- ⚠️ 关闭后不能混用 `cin`/`cout` 和 `scanf`/`printf`
+
+</v>
+
+<v>
+
+### `cin.tie(nullptr)`
+
+默认情况下，每次 `cin` 前会自动刷新 `cout` 缓冲区
+
+- 解绑后，`cin` 和 `cout` 互不干扰
+- 效率更高
+
+</v>
+---
+layout: two-cols
+layoutClass: gap-4
+---
+
+## `\n` 和 `endl` 的区别
+
+```cpp {all|1-2|4-}
+cout << 1 << endl;
+cin >> a;
+
+// 解除绑定，这样输入的时候就不会自动刷新缓冲区
+cin.tie(nullptr); 
+cout << 1 << '\n';
+cin >> a;
+```
+
+::right::
+
+<v>
+
+**`endl`**：立即刷新缓冲区
+- 程序立刻把数据写到屏幕上
+- 效率较低
+- 避免频繁使用
+
+**`'\n'`**：仅换行，不刷新
+- 数据先存在缓冲区
+- 效率较高
+
+<br/>
+
+- 程序结束的时候会自动刷新缓冲区
+- 如果没有解绑 `cin.tie` 那么 `cin` 的时候也会自动刷新缓冲区
+
+</v>
+
+<v>
+
+输入 `c`
+回显：
+```
+1c
+```
+
+</v>
+
+<v>
+
+输入 `c`
+回显：
+```
+c1
+```
+
+</v>
+
 
 ---
 layout: two-cols
 layoutClass: gap-4
 ---
 
-## 结构体
+## EOF (End of File)
 
+```cpp {all|2|all}
+int a;
+while (cin >> a)  // cin 返回值判断
+    cout << a << '\n';
+```
 
+::right::
 
-```cpp {all|1-8|10-13|15-18}
-// 定义结构体
-struct Point {
-    int x, y;
+<v>
+
+### 什么是 EOF
+
+End of File 的缩写，表示文件结束标志
+
+**输入 EOF**：
+- Windows: `Ctrl + Z`
+- Linux/Mac: `Ctrl + D`
+
+</v>
+
+<v>
+
+### cin 的返回值
+
+`cin >> a` 会返回 cin 本身：
+
+- 成功读取 → `true`
+- 读取到 EOF → `false`
+
+</v>
+
+<v>
+
+### 使用场景
+
+有些题目不告诉读取多少数据，需要自行判断：
+
+</v>
+
+---
+layout: two-cols
+layoutClass: gap-4
+---
+
+## ACM 常用模板
+
+```cpp {all|4|5|7-9|11-|all}
+#include <bits/stdc++.h>
+using namespace std;
+
+using ll = long long;
+// #define int long long // 邪修
+
+void solve() {
+    // 在这里写核心处理流程
+}
+
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
     
-    // 成员函数
-    double dist() {
-        return sqrt(x*x + y*y);
+    int T = 1;
+    // cin >> T;  // 多测时取消注释
+    while (T--) {
+        solve();
     }
-};
-
-// 使用结构体
-Point p = {3, 4};
-double d = p.dist();  // 5.0
-
-// 作为容器元素
-vector<Point> points;
-points.push_back({1, 2});
+    
+    return 0;
+}
 ```
 
 ::right::
 
-<v-clicks>
+<v></v>
 
-### 自定义类型
-<div class="visual-box">
-组合多个数据成员<br>
-可以包含成员函数<br>
-类似简化的 class
-</div>
+<v>
 
-### 初始化方式
-<div class="visual-box">
-<code>Point p = {3, 4};</code><br>
-<code>Point p{3, 4};</code><br>
-<code>Point p; p.x = 3; p.y = 4;</code>
-</div>
+### 类型别名
 
-### 与 STL 结合
-<div class="visual-box">
-可作为 vector、set 等元素<br>
-需要定义比较操作<br>
-重载 <code>operator<</code>
-</div>
-
-</v-clicks>
-
----
-layout: two-cols
-layoutClass: gap-4
----
-
-## 自定义比较
-
-
-
-```cpp {all|1-9|11-16|18-22}
-// 方法1: 重载 operator<
-struct Point {
-    int x, y;
-    bool operator<(const Point& p) const {
-        if (x != p.x) return x < p.x;
-        return y < p.y;
-    }
-};
+```cpp
+using ll = long long;
 ```
 
-::right::
+简化码量，`ll` 等同于 `long long`
 
-<v-clicks>
+</v>
 
-### 三种方式
-<div class="visual-box">
-1️⃣ 重载 <code>operator<</code><br>
-2️⃣ 自定义比较函数<br>
-3️⃣ Lambda 表达式（后面讲）
-</div>
+<v>
 
-### 重载运算符
-<div class="visual-box">
-用于 set、map、sort<br>
-定义默认排序规则<br>
-<code>const</code> 修饰符必须加
-</div>
+### 防止溢出
 
-### Lambda 比较
-<div class="visual-box">
-临时、灵活<br>
-适合一次性使用<br>
-代码更简洁
-</div>
+一键将 `int` 替换为 `long long`
+- `int` 范围：$-2^{31}$ ~ $2^{31}-1$ (约 $2 \times 10^9$)
+- `long long` 范围：$-2^{63}$ ~ $2^{63}-1$
 
-</v-clicks>
+⚠️ 使用时 main 要写成 `signed main()`
 
----
-layout: center
-class: text-center
----
+> 最好是在写题之前就预估好需要的范围，不要之后才恍然大悟要改范围
 
-## 第一部分完成
-
-语言基础 ✓
-
-下一部分：STL 容器
+</v>
