@@ -82,9 +82,7 @@ int main() {
 
 </v>
 
-<v>
-
-### 命名空间
+<v class="w-5/7">
 
 ```mermaid
 graph LR
