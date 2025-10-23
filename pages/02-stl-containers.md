@@ -305,6 +305,7 @@ tuple<string, int> t3 {p};                   // pair 转为二元 tuple
 
 ::right::
 
+<v></v>
 <v>
 
 **`pair` 二元组**
@@ -343,91 +344,6 @@ tuple<string, int> t3 {p};                   // pair 转为二元 tuple
 - 返回多个值
 - 临时数据打包
 - 替代简单结构体
-
-</v>
-
----
-layout: two-cols
-layoutClass: gap-4
----
-
-## deque 双端队列
-
-```cpp {all|1-2|4-6|8-10|12-16|18-|all}
-#include <deque>
-deque<int> q;
-
-// 两端插入 - O(1)
-q.push_back(2);       // 尾部插入
-q.push_front(3);      // 头部插入
-
-// 两端删除 - O(1)
-q.pop_back();         // 删除队尾
-q.pop_front();        // 删除队首
-
-// 访问和查询 - O(1)
-int x = q.front();    // 队首元素
-int y = q.back();     // 队尾元素
-int len = q.size();   // 元素个数
-bool empty = q.empty();
-
-// 中间操作 - O(n)
-q.erase(q.begin() + 1);          // 删除指定位置
-q.erase(q.begin() + l, 
-        q.begin() + r);          // 删除区间[l,r)
-q.clear();                       // 清空
-```
-
-::right::
-
-<v>
-
-**双端操作**
-
-首尾都可以高效插入删除
-
-是 `queue` 的超集
-
-</v>
-<v></v>
-
-<v>
-
-**性能特点**
-
-- 两端操作：O(1)
-- 随机访问：O(1)
-- 中间插删：O(n)
-
-</v>
-
-<v>
-
-**经典应用**
-
-单调队列(滑动窗口)：
-```cpp
-// 维护窗口最小值
-while (!q.empty() && a[i] < q.back())
-    q.pop_back();
-q.push_back(a[i]);
-if (q.front() < i - k + 1)
-    q.pop_front();
-```
-
-> 例题：P1886
-
-</v>
-<v></v>
-<v></v>
-<v>
-
-**使用场景**
-
-✓ 滑动窗口最值  
-✓ 单调队列优化  
-✓ 需要两端操作  
-✗ 只需单端操作用 `stack`/`queue`
 
 </v>
 
@@ -518,6 +434,91 @@ bool empty = q.empty();
 队尾：只能查询和插入
 
 单向流动，无法回退
+
+</v>
+
+---
+layout: two-cols
+layoutClass: gap-4
+---
+
+## deque 双端队列
+
+```cpp {all|1-2|4-6|8-10|12-16|18-|all}
+#include <deque>
+deque<int> q;
+
+// 两端插入 - O(1)
+q.push_back(2);       // 尾部插入
+q.push_front(3);      // 头部插入
+
+// 两端删除 - O(1)
+q.pop_back();         // 删除队尾
+q.pop_front();        // 删除队首
+
+// 访问和查询 - O(1)
+int x = q.front();    // 队首元素
+int y = q.back();     // 队尾元素
+int len = q.size();   // 元素个数
+bool empty = q.empty();
+
+// 中间操作 - O(n)
+q.erase(q.begin() + 1);          // 删除指定位置
+q.erase(q.begin() + l, 
+        q.begin() + r);          // 删除区间[l,r)
+q.clear();                       // 清空
+```
+
+::right::
+
+<v>
+
+**双端操作**
+
+首尾都可以高效插入删除
+
+是 `queue` 的超集
+
+</v>
+<v></v>
+
+<v>
+
+**性能特点**
+
+- 两端操作：O(1)
+- 随机访问：O(1)
+- 中间插删：O(n)
+
+</v>
+
+<v>
+
+**经典应用**
+
+单调队列(滑动窗口)：
+```cpp
+// 维护窗口最小值
+while (!q.empty() && a[i] < q.back())
+    q.pop_back();
+q.push_back(a[i]);
+if (q.front() < i - k + 1)
+    q.pop_front();
+```
+
+> 例题：P1886
+
+</v>
+<v></v>
+<v></v>
+<v>
+
+**使用场景**
+
+✓ 滑动窗口最值  
+✓ 单调队列优化  
+✓ 需要两端操作  
+✗ 只需单端操作用 `stack`/`queue`
 
 </v>
 
